@@ -9,3 +9,5 @@ This project is a starting point for a Flutter application its a work in progres
 this project contains a docker-compose for pocketbase. If you want to access the pocketbase api i would recommend setting up ngrok. And just use this command:
 
 ngrok http 0.0.0.0:8090/
+
+also copy the .env.example and put the correct pocketbase url in there.
