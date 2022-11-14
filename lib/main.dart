@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:isar/isar.dart';
 import 'package:pocketbase_flutter_demo/helpers/pocket_base_helper.dart';
-import 'package:pocketbase_flutter_demo/localstorage/session.dart';
-import 'package:pocketbase_flutter_demo/pages/home_page.dart';
+
 import 'package:pocketbase_flutter_demo/pages/wrapper.dart';
 
 void main() async {
