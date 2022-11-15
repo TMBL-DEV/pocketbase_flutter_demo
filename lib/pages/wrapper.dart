@@ -15,35 +15,7 @@ class Wrapper extends StatefulWidget {
 }
 
 class _WrapperState extends State<Wrapper> {
-  bool loading = true;
-  @override
-  void initState() {
-    SharedPreferences.getInstance().then((instance) {
-      Map? user = jsonDecode(instance.getString("user") ?? "");
-      String? token = instance.getString("token");
-
-      if (user != null && token != null) {
-        PocketBaseHelper().client.authStore.save(
-            token ?? '',
-            UserModel(
-              id: user["id"],
-              email: user["email"],
-              created: user["created"],
-              verified: user["verified"],
-              lastResetSentAt: user["lastResetSentAt"],
-              lastVerificationSentAt: user["lastVerificationSentAt"],
-              profile: null,
-              updated: user["updated"],
-            ));
-      }
-
-      setState(() {
-        loading = false;
-      });
-    });
-
-    super.initState();
-  }
+  bool loading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -61,17 +33,17 @@ class _WrapperState extends State<Wrapper> {
     return StreamBuilder(
       stream: PocketBaseHelper().client.authStore.onChange,
       builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          SharedPreferences.getInstance().then((instance) {
-            instance.setString('user', jsonEncode(snapshot.data?.model));
-            instance.setString('token', jsonEncode(snapshot.data?.token));
-          });
+        // if (snapshot.hasData) {
+        //   SharedPreferences.getInstance().then((instance) {
+        //     instance.setString('user', jsonEncode(snapshot.data?.model));
+        //     instance.setString('token', jsonEncode(snapshot.data?.token));
+        //   });
 
-          PocketBaseHelper()
-              .client
-              .authStore
-              .save(snapshot.data?.token ?? '', snapshot.data?.model);
-        }
+        //   PocketBaseHelper()
+        //       .client
+        //       .authStore
+        //       .save(snapshot.data?.token ?? '', snapshot.data?.model);
+        // }
 
         return PocketBaseHelper().client.authStore.isValid
             ? const MyHomePage(title: 'Flutter Demo Home Page')

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:pocketbase_flutter_demo/helpers/pocket_base_helper.dart';
+import 'package:pocketbase_flutter_demo/services/auth_service.dart';
 
 class SignUpWidget extends StatefulWidget {
   const SignUpWidget({super.key});
@@ -14,6 +16,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
   final _formKey = GlobalKey<FormState>();
   String email = '';
   String password = '';
+  int? pincode = null;
 
   Widget build(BuildContext context) {
     return Container(
@@ -31,9 +34,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                     style: TextStyle(fontSize: 29, color: Colors.white),
                   ),
                 ),
-                const Padding(
-                  padding: EdgeInsets.all(4),
-                ),
+                const SizedBox(height: 20),
                 TextFormField(
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
@@ -48,9 +49,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                     return null;
                   },
                 ),
-                const Padding(
-                  padding: EdgeInsets.all(4),
-                ),
+                const SizedBox(height: 20),
                 TextFormField(
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
@@ -67,19 +66,38 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                   },
                   obscureText: true,
                 ),
+                TextFormField(
+                  decoration: const InputDecoration(
+                    labelText: 'pincode',
+                  ),
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a pincode';
+                    }
+
+                    pincode = int.parse(value);
+
+                    return null;
+                  },
+                ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
                   child: ElevatedButton(
                     onPressed: () async {
-                      // Validate returns true if the form is valid, or false otherwise.
-                      if (_formKey.currentState!.validate()) {
+                      if (_formKey.currentState!.validate() &&
+                          pincode != null) {
                         UserModel result = await PocketBaseHelper().register(
                           email: email,
                           password: password,
                           passwordConfirm: password,
                         );
 
-                        var user = await PocketBaseHelper()
+                        await AuthService().storeEmail(email);
+                        await AuthService()
+                            .storePassword(password, pincode ?? 0);
+
+                        await PocketBaseHelper()
                             .client
                             .users
                             .authViaEmail(email, password);

@@ -18,13 +18,6 @@ class AuthService {
       "password",
       encrypted.base64,
     );
-
-    // final decrypted = encrypter.decrypt(encrypted, iv: iv);
-    final encryptedPassword = await _getEncryptedStoredPassword();
-    final decrypted = _decryptStoredPassword(encryptedPassword, pincode);
-    print(decrypted);
-    // print(decrypted);
-    // print(encrypted.base64);
   }
 
   String _getEncryptedPinCode(int pincode) {
@@ -51,5 +44,19 @@ class AuthService {
     final key = Key.fromUtf8(md5Pincode);
 
     return Encrypter(AES(key));
+  }
+
+  Future<String> decryptPassword(int pincode) async {
+    return _decryptStoredPassword(
+        (await _getEncryptedStoredPassword()), pincode);
+  }
+
+  Future<void> storeEmail(String email) async {
+    final instance = await SharedPreferences.getInstance();
+    instance.setString("email", email);
+  }
+
+  Future<String> getStoredEmail() async {
+    return (await SharedPreferences.getInstance()).getString("email") ?? "";
   }
 }

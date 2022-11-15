@@ -30,30 +30,38 @@ class _MyHomePageState extends State<MyHomePage> {
       documentId = value.items.first.id;
       _counter = value.items.first.data['amount'];
       listenToChanges();
+
       setState(() {
         loading = false;
       });
     }).catchError((error) {
-      var shit = true;
       setState(() {
         loading = false;
       });
     });
   }
 
-  void listenToChanges() {
-    PocketBaseHelper().client.realtime.subscribe("count/$documentId", (item) {
+  @override
+  void dispose() {
+    super.dispose();
+    PocketBaseHelper().client.realtime.unsubscribe("count/$documentId");
+  }
+
+  Future<void> listenToChanges() async {
+    await PocketBaseHelper().client.realtime.subscribe("count/$documentId",
+        (items) {
       setState(() {
-        _counter = item.record?.data['amount'] ?? _counter;
+        _counter = items.record?.data['amount'] ?? _counter;
       });
     });
   }
 
   void _incrementCounter() {
-    PocketBaseHelper().client.records.update('count', documentId,
-        body: {'amount': _counter++}).then(((value) {
-      var sheesh = true;
-    }));
+    PocketBaseHelper().client.records.update(
+      'count',
+      documentId,
+      body: {'amount': _counter + 1},
+    );
   }
 
   @override

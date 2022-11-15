@@ -25,6 +25,7 @@ class SignUpPageState extends State<SignUpPage> {
   String email = '';
   String password = '';
   int _currentPage = 1;
+
   List screens = [
     SignUpWidget(key: UniqueKey()),
     SignInWidget(key: UniqueKey()),
@@ -35,9 +36,25 @@ class SignUpPageState extends State<SignUpPage> {
     // Build a Form widget using the _formKey created above.
     return Scaffold(
       appBar: AppBar(
-        title: const Text("sing up"),
+        title: const Text("Sign up"),
       ),
-      body: screens[_currentPage],
+      body: Column(
+        children: [
+          screens[_currentPage],
+          ElevatedButton(
+            onPressed: () {
+              setState(() {
+                _currentPage = _currentPage == 1 ? 0 : 1;
+              });
+            },
+            child: Text(
+              _currentPage == 1
+                  ? "Don't have an account yet? Register"
+                  : "Already have an account? Login",
+            ),
+          )
+        ],
+      ),
     );
   }
 }
